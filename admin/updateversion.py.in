@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #			u p d a t e v e r s i o n . p y
 # $Revision: 171 $
 # $Author: eckertb $
@@ -37,9 +37,9 @@ import re
 import requests
 import json
 import platform
+import argparse
 from xml.etree import ElementTree
-from optparse import OptionParser
-from distutils.version import LooseVersion
+from packaging.version import parse as parse_version
 import syslog
 
 #################################
@@ -49,17 +49,21 @@ import syslog
 service_config_xml = '/etc/rmsgw/winlinkservice.xml'
 gateway_config = '/etc/rmsgw/gateway.conf'
 version_info = '/etc/rmsgw/.version_info'
-py_version_require='2.7.9'
+py_version_require='3.6'
 
 #################################
 # END CONFIGURATION SECTION
 #################################
-cmdlineparser = OptionParser()
-cmdlineparser.add_option("-d", "--debug",
-                         action="store_true", dest="DEBUG", default=False,
-                         help="turn on debug output")
-(options, args) = cmdlineparser.parse_args()
+cmdlineparser = argparse.ArgumentParser()
+cmdlineparser.add_argument(
+    "-d", "--debug",
+    dest="DEBUG",
+    action="store_true",
+    default=False,
+    help="turn on debug output"
+)
 
+options = cmdlineparser.parse_args()
 errors = 0
 
 ws_config = {}
@@ -81,8 +85,8 @@ gwfile.close()
 #
 # setup syslog
 #
-fac = eval('syslog.LOG_' + gw_config['LOGFACILITY'].upper())
-mask = eval('syslog.LOG_' + gw_config['LOGMASK'].upper())
+fac = getattr(syslog, 'LOG_' + gw_config.get('LOGFACILITY', 'USER').upper(), syslog.LOG_USER)
+mask = getattr(syslog, 'LOG_' + gw_config.get('LOGMASK', 'INFO').upper(), syslog.LOG_INFO)
 syslog.openlog(logoption=syslog.LOG_PID, facility=fac)
 syslog.setlogmask(syslog.LOG_UPTO(mask))
 
@@ -91,10 +95,10 @@ syslog.setlogmask(syslog.LOG_UPTO(mask))
 #
 python_version=platform.python_version()
 
-if LooseVersion(python_version) >= LooseVersion(py_version_require):
-    if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'Python Version Check: ' + str(python_version) + ' OK')
+if parse_version(python_version) >= parse_version(py_version_require):
+    if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"Python Version Check: {python_version} OK")
 else:
-    syslog.syslog(syslog.LOG_ERR, 'Need more current Python version, require version: ' + str(py_version_require) + ' or newer')
+    syslog.syslog(syslog.LOG_ERR, f"Need more current Python version, require version: {py_version_require} or newer")
     print('Exiting ...')
     syslog.closelog()
     sys.exit(1)
@@ -126,10 +130,10 @@ with open(version_info) as versionfile:
             version[name.strip()] = val.strip()
 versionfile.close()
 
-if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'ws_config = {}'.format(ws_config))
-if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'svc_calls = {}'.format(svc_calls))
-if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'param_roots = {}'.format(param_roots))
-if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'version_program = {}'.format(version['PROGRAM']))
+if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"ws_config = {ws_config}")
+if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"svc_calls = {svc_calls}")
+if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"param_roots = {param_roots}")
+if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"version_program = {version['PROGRAM']}")
 
 #
 # get gateway callsign from config
@@ -139,14 +143,14 @@ if 'GWCALL' in gw_config:
     callsign = gw_config['GWCALL'].upper()
 
 basecall=callsign.split("-", 1)[0]
-if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'basecallsign = {}'.format(basecall))
+if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"basecallsign = {basecall}")
 
 headers = {'Content-Type': 'application/xml'}
 
 # svc_url = 'http://' + ws_config['svchost'] + ':' + ws_config['svcport'] + svc_calls['versionadd']
 # Needs to look like this:
-svc_url = 'https://' + ws_config['svchost'] + svc_calls['versionadd'] + '?' + 'Callsign=' + format(callsign) + '&Program=' + format(version['PROGRAM']) + '&Version=' + format(version['LABEL']) + '&Key=' + format(ws_config['WebServiceAccessCode'] + '&format=json')
-if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'svc_url = {}'.format(svc_url))
+svc_url = 'https://' + ws_config['svchost'] + svc_calls['versionadd'] + '?' + 'Callsign=' + format(callsign) + '&Program=' + format(version['PROGRAM']) + '&Version=' + format(version['LABEL']) + '&Key=' + format(ws_config['WebServiceAccessCode']) + '&format=json'
+if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"svc_url = {svc_url}")
 
 #
 # create xml tree for call parameters
@@ -161,7 +165,7 @@ ElementTree.SubElement(version_add, "Comments")
 ElementTree.SubElement(version_add, "Program")
 ElementTree.SubElement(version_add, "Version")
 
-if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'bare version_add XML = {}'.format(ElementTree.tostring(version_add)))
+if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"bare version_add XML = {ElementTree.tostring(version_add, encoding='unicode')}")
 
 #
 # prepare xml parameters for call
@@ -172,19 +176,20 @@ version_add.find('Comments').text = version['PACKAGE']
 version_add.find('Program').text = version['PROGRAM']
 version_add.find('Version').text = version['LABEL']
 
-if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'version_add XML = {}'.format(ElementTree.tostring(version_add)))
+payload_data = ElementTree.tostring(version_add, encoding='unicode')
+if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"version_add XML = {payload_data}")
 
 # Post the request
 try:
-    response = requests.post(svc_url, data=ElementTree.tostring(version_add), headers=headers)
+    response = requests.post(svc_url, data=payload_data, headers=headers)
 except requests.ConnectionError as e:
     syslog.syslog(syslog.LOG_DEBUG, "Error: Internet connection failure:")
-    syslog.syslog(syslog.LOG_DEBUG, 'svc_url = {}'.format(svc_url))
+    syslog.syslog(syslog.LOG_DEBUG, f"svc_url = {svc_url}")
     syslog.syslog(syslog.LOG_DEBUG, str(e))
     syslog.closelog()
     sys.exit(1)
 
-if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, 'Response = {}'.format(response.content))
+if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"Response = {response.content}")
 
 json_data = response.json()
 if options.DEBUG: print(json.dumps(json_data, indent=2))
@@ -192,7 +197,7 @@ json_dict = json.loads(response.text)
 
 # print the return code of this request, should be 200 which is "OK"
 if options.DEBUG: print("Response status code: " + str(response.status_code))
-if options.DEBUG: print('Debug: Response =', response.content)
+if options.DEBUG: print(f"Debug: Response = {response.content}")
 if options.DEBUG: print("Debug: Content type: " + response.headers['content-type'])
 
 #
@@ -201,22 +206,22 @@ if options.DEBUG: print("Debug: Content type: " + response.headers['content-type
 if response.ok:
     if options.DEBUG: print("Debug: Good Response status code")
 else:
-    print('*** Version update for ', callsign, 'failed, ErrorCode =',  str(response.status_code))
+    print(f"*** Version update for {callsign} failed, ErrorCode ={response.status_code}")
     errors += 1
 
 #
 # get status response (if there is one) and confirm success
 #
-if json_dict['ResponseStatus']:
-    print('ResponseStatus not NULL: ', json_dict['ResponseStatus'])
-    print('*** Channel Update for', callsign, 'failed')
+if json_dict.get('ResponseStatus'):
+    print(f"ResponseStatus not NULL: {json_dict['ResponseStatus']}")
+    print(f"*** Channel Update for {callsign} failed")
     print('*** Error code:    ' + json_dict['ResponseStatus']['ErrorCode'])
     print('*** Error message: ' + json_dict['ResponseStatus']['Message'])
 
     errors += 1
 else:
-    if options.DEBUG: print('ResponseStatus is NULL: ', json_dict['ResponseStatus'])
-    syslog.syslog(syslog.LOG_INFO, 'Version update for {} to version {} successful.'.format(callsign, version['LABEL']))
+    if options.DEBUG: print(f"ResponseStatus is NULL: {json_dict.get('ResponseStatus')}")
+    syslog.syslog(syslog.LOG_INFO, f"Version update for {callsign} to version {version['LABEL']} successful.")
 
 syslog.closelog()
 
