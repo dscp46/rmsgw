@@ -40,6 +40,7 @@ import json
 import platform
 import datetime
 import argparse
+from urllib.parse import quote
 from xml.etree import ElementTree
 from packaging.version import parse as parse_version
 
@@ -208,7 +209,7 @@ headers = {'Content-Type': 'application/xml'}
 #svc_url = 'http://' + ws_config['svchost'] + ':' + ws_config['svcport'] + svc_calls['sysopget']
 
 # V5 CMS web services url format
-svc_url = 'https://' + ws_config['svchost'] + svc_calls['sysop2get'] + '?' + 'Callsign=' + format(options.callsign) + '&Program=' + format(version['PROGRAM']) + '&Password=' + format(rms_chans['password']) + '&Key=' + format(ws_config['WebServiceAccessCode']) + '&format=json'
+svc_url = 'https://' + ws_config['svchost'] + svc_calls['sysop2get'] + '?' + 'Callsign=' + quote(options.callsign) + '&Program=' + quote(version['PROGRAM']) + '&Password=' + quote(rms_chans['password']) + '&Key=' + quote(ws_config['WebServiceAccessCode']) + '&format=json'
 if options.DEBUG: print(f"svc_url = {svc_url}")
 
 #

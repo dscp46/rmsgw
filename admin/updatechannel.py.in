@@ -38,6 +38,7 @@ import requests
 import json
 import platform
 import argparse
+from urllib.parse import quote
 from xml.etree import ElementTree
 from packaging.version import parse as parse_version
 import syslog
@@ -155,7 +156,7 @@ headers = {'Content-Type' : 'application/xml'}
 
 # svc_url = 'http://' + ws_config['svchost'] + ':' + ws_config['svcport'] + svc_calls['channeladd']
 # Needs to look like this:
-svc_url = 'https://' + ws_config['svchost'] + svc_calls['channeladd'] + '?' + 'Callsign=' + format(options.callsign) + '&Key=' + format(ws_config['WebServiceAccessCode']) + '&format=json'
+svc_url = 'https://' + ws_config['svchost'] + svc_calls['channeladd'] + '?' + 'Callsign=' + quote(options.callsign) + '&Key=' + quote(ws_config['WebServiceAccessCode']) + '&format=json'
 if options.DEBUG: syslog.syslog(syslog.LOG_DEBUG, f"svc_url = {svc_url}")
 
 #
