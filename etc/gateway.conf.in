@@ -4,4 +4,4 @@ CHANNELFILE=@sysconfdir@/channels.xml
 BANNERFILE=@sysconfdir@/banner
 LOGFACILITY=LOCAL0
 LOGMASK=INFO
-PYTHON=/usr/bin/python
+PYTHON=/usr/bin/python3

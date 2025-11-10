@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #			m k s y s o p . p y
 # $Revision: 165 $
 # $Author: eckertb $
@@ -38,9 +38,10 @@ import re
 import requests
 import json
 import platform
+import argparse
+from urllib.parse import quote
 from xml.etree import ElementTree
-from optparse import OptionParser
-from distutils.version import LooseVersion
+from packaging.version import parse as parse_version
 
 #################################
 # BEGIN CONFIGURATION SECTION
@@ -55,7 +56,7 @@ sysop_config_xml = '/etc/rmsgw/sysop.xml'
 
 new_sysop_config_xml = 'new-sysop.xml'
 
-py_version_require='2.7.9'
+py_version_require='3.6'
 
 #################################
 # END CONFIGURATION SECTION
@@ -64,24 +65,32 @@ py_version_require='2.7.9'
 ### Local Functions #############
 
 def NotFoundHelp():
-    print '*' * 75
-    print 'If you need to create your initial sysop record,'
-    print 'copy', sysop_template_xml, 'to', sysop_config_xml
-    print 'and enter the appropriate text within each of the'
-    print 'sysop element tags.'
-    print '*' * 75
+    print('*' * 75)
+    print('If you need to create your initial sysop record,')
+    print(f"copy {sysop_template_xml} to {sysop_config_xml}")
+    print('and enter the appropriate text within each of the')
+    print('sysop element tags.')
+    print('*' * 75)
 
 #################################
 
-cmdlineparser = OptionParser()
-cmdlineparser.add_option("-d", "--debug",
-                         action="store_true", dest="DEBUG", default=False,
-                         help="turn on debug output")
-cmdlineparser.add_option("-c", "--callsign",
-                         action="store", metavar="CALLSIGN",
-                         dest="callsign", default=None,
-                         help="use a specific callsign")
-(options, args) = cmdlineparser.parse_args()
+cmdlineparser = argparse.ArgumentParser()
+
+cmdlineparser.add_argument(
+    "-d", "--debug",
+    action="store_true",
+    dest="DEBUG",
+    default=False,
+    help="Enable debug output."
+)
+cmdlineparser.add_argument(
+    "-c", "--callsign",
+    metavar="CALLSIGN",
+    dest="callsign",
+    help="Use a specific callsign."
+)
+
+options = cmdlineparser.parse_args()
 
 #
 # dictionaries for config info
@@ -109,10 +118,10 @@ python_version=platform.python_version()
 # if StrictVersion(python_version) >= StrictVersion(py_version_require):
 # if parse_version(python_version) >= parse_version(py_version_require):
 
-if LooseVersion(python_version) >= LooseVersion(py_version_require):
-    if options.DEBUG: print('Python Version Check: ' + str(python_version) + ' OK')
+if parse_version(python_version) >= parse_version(py_version_require):
+    if options.DEBUG: print(f"Python Version Check: {python_version} OK")
 else:
-    print('Need more current Python version than: ' + str(python_version) + ' require version: ' + str(py_version_require) + ' or newer')
+    print(f"Need more current Python version than: {python_version} require version: {py_version_require} or newer")
     print('Exiting ...')
     sys.exit(1)
 
@@ -126,7 +135,7 @@ with open(gateway_config) as gwfile:
             gw_config[name.strip()] = val.strip()
 gwfile.close()
 
-if options.DEBUG: print('Gateway config =', gw_config)
+if options.DEBUG: print(f"Gateway config = {gw_config}")
 
 #
 # load version info
@@ -138,7 +147,7 @@ with open(version_info) as versionfile:
             version[name.strip()] = val.strip()
 versionfile.close()
 
-if options.DEBUG: print('version_program = {}'.format(version['PROGRAM']))
+if options.DEBUG: print( f"version_program = {version['PROGRAM']}")
 
 #
 # load service config from XML
@@ -177,9 +186,9 @@ for channel in rmschannels.findall("%schannel" % (ns)):
     password = channel.find("%spassword" % (ns)).text
     rms_chans['password'] = password
 
-if options.DEBUG: print('ws_config =', ws_config)
-if options.DEBUG: print('svc_calls =', svc_calls)
-if options.DEBUG: print('param_roots =', param_roots)
+if options.DEBUG: print(f"ws_config = {ws_config}")
+if options.DEBUG: print(f"svc_calls = {svc_calls}")
+if options.DEBUG: print(f"param_roots = {param_roots}")
 
 #
 # need a callsign to try to get things setup
@@ -200,23 +209,20 @@ if options.callsign == None: # no callsign given on cmd line?
     else:
         # ask for callsign if none given on command line
         # and none in the gateway config
-        options.callsign = raw_input('Enter gateway callsign (without SSID): ')
+        options.callsign = input('Enter gateway callsign (without SSID): ')
 
 options.callsign = options.callsign.upper()
 
-if options.DEBUG: print('callsign =', options.callsign)
+if options.DEBUG: print(f"callsign = {options.callsign}")
 
 #
 # prepare and make webservice call
 #
 headers = {'Content-Type': 'application/xml'}
 
-# Old winlink services url format
-# svc_url = 'http://' + ws_config['svchost'] + ':' + ws_config['svcport'] + svc_calls['sysopget']
-#svc_url = 'https://' + ws_config['svchost'] + svc_calls['sysop2get'] + '?' + 'Callsign=' + format(options.callsign) + '&Program=' + format(version['PROGRAM']) + '&Password=' + format(rms_chans['password']) + '&Key=' + format(ws_config['WebServiceAccessCode'] + '&format=json')
-svc_url = 'https://' + ws_config['svchost'] + svc_calls['sysop2get'] + '?' + 'Callsign=' + format(options.callsign) + '&Program=' + format(version['PROGRAM']) + '&Password=' + format(rms_chans['password']) + '&Key=' + format(ws_config['WebServiceAccessCode'] + '&format=json')
+svc_url = 'https://' + ws_config['svchost'] + svc_calls['sysop2get'] + '?' + 'Callsign=' + quote(options.callsign) + '&Program=' + quote(version['PROGRAM']) + '&Password=' + quote(rms_chans['password']) + '&Key=' + quote(ws_config['WebServiceAccessCode']) + '&format=json'
 
-if options.DEBUG: print 'svc_url =', svc_url
+if options.DEBUG: print(f"svc_url = {svc_url}")
 
 #
 # prepare xml parameters for call
@@ -231,28 +237,29 @@ child.text = ws_config['WebServiceAccessCode']
 child = ElementTree.SubElement(sysop_get, 'Callsign')
 child.text = options.callsign
 
-if options.DEBUG: print('sysop_get XML =', ElementTree.tostring(sysop_get))
+request_data = ElementTree.tostring(sysop_get, encoding='unicode')
+if options.DEBUG: print(f"sysop_get XML = {request_data}")
 
 # Post the request
 try:
-    response = requests.post(svc_url, data=ElementTree.tostring(sysop_get), headers=headers)
+    response = requests.post(svc_url, data=request_data, headers=headers)
 except requests.ConnectionError as e:
     print("Error: Internet connection failure:")
-    print('svc_url = ', svc_url)
+    print(f"svc_url = {svc_url}")
     print(e)
     sys.exit(1)
 
-if options.DEBUG: print 'Response =', response.content
+if options.DEBUG: print(f"Response = {response.content}")
 
 # we'll load the returned xml into this dictionary
 return_data = {}
 
 json_data = response.json()
-if options.DEBUG: print((json.dumps(json_data, indent=2)))
+if options.DEBUG: print(json.dumps(json_data, indent=2))
 json_dict = json.loads(response.text)
 
 # print the return code of this request, should be 200 which is "OK"
-if options.DEBUG: print("Request status code:" + str(response.status_code))
+if options.DEBUG: print(f"Request status code: {response.status_code}")
 
 #
 # Verify request status code"
@@ -260,19 +267,19 @@ if options.DEBUG: print("Request status code:" + str(response.status_code))
 if response.ok:
     if options.DEBUG: print("Debug: Good Request status code")
 else:
-    print('*** Get for', options.callsign, 'failed, ErrorCode =', str(response.status_code))
-    print('*** Error code:    ' + json_dict['ResponseStatus']['ErrorCode'])
-    print('*** Error message: ' + json_dict['ResponseStatus']['Message'])
+    print(f"*** Get for {options.callsign} failed, ErrorCode ={response.status_code}")
+    print(f"*** Error code:    {json_dict['ResponseStatus']['ErrorCode']}")
+    print(f"*** Error message: {json_dict['ResponseStatus']['Message']}")
 #    sys.exit(1)
 
 #
 # check for errors coming back
 #
-if json_dict['ResponseStatus']:
-    print('ResponseStatus not NULL: ', json_dict['ResponseStatus'])
+if json_dict.get('ResponseStatus'):
+    print(f"ResponseStatus not NULL: {json_dict['ResponseStatus']}")
     sys.exit(1)
 else:
-    if options.DEBUG: print(('ResponseStatus is NULL: ', json_dict['ResponseStatus']))
+    if options.DEBUG: print(f"ResponseStatus is NULL: {json_dict.get('ResponseStatus')}")
 
 
 #
@@ -285,7 +292,7 @@ else:
 returned_callsign=json_dict['Sysop']['Callsign']
 
 if not returned_callsign or not returned_callsign.strip():
-    print('*** No record found for', options.callsign)
+    print(f"*** No record found for {options.callsign}")
     sys.exit(2)
 
 #
@@ -293,7 +300,7 @@ if not returned_callsign or not returned_callsign.strip():
 # for our purposes here)
 #
 if not os.path.isfile(sysop_template_xml):
-    print("File: " + sysop_template_xml + " does not exist")
+    print(f"File: {sysop_template_xml} does not exist")
     sys.exit(2)
 
 document = ElementTree.parse(sysop_template_xml)
@@ -325,9 +332,9 @@ for sysop in sysops.findall('sysop'):
 # as appropriate
 document.write(new_sysop_config_xml)
 
-print 'New sysop XML data written to', new_sysop_config_xml
-print 'Please inspect the results and copy to', sysop_config_xml
-print 'if it is correct.'
+print(f"New sysop XML data written to {new_sysop_config_xml}")
+print(f"Please inspect the results and copy to {sysop_config_xml}")
+print(f"if it is correct.")
 
 sys.exit(0)
 
