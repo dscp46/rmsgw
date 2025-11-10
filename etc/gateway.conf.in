@@ -1,7 +1,7 @@
 GWCALL=N0CALL
 GRIDSQUARE=AA00aa
-CHANNELFILE=@sysconfdir@/channels.xml
-BANNERFILE=@sysconfdir@/banner
+CHANNELFILE=@rmssysconfdir@/channels.xml
+BANNERFILE=@rmssysconfdir@/banner
 LOGFACILITY=LOCAL0
 LOGMASK=INFO
 PYTHON=/usr/bin/python3

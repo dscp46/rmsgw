@@ -48,7 +48,8 @@ edit = sed \
 	-e 's|@bindir[@]|$(bindir)|g' \
 	-e 's|@sysconfdir[@]|$(sysconfdir)|g' \
 	-e 's|@localstatedir[@]|$(localstatedir)|g' \
-	-e 's|@prefix[@]|$(prefix)|g'
+	-e 's|@prefix[@]|$(prefix)|g' \
+	-e 's|@rmssysconfdir[@]|$(RMS_SYSCONFDIR)|g'
 
 do_subst:
 	@list='$(etcfiles)'; for p in $$list; do \

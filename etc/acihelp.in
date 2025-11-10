@@ -17,4 +17,4 @@ See the rmsgw_aci man page for more information.
 
 The auto check in involves updating availablity in the Winlink 2000
 system for each defined and active channel found in
-@sysconfdir@/channels.xml.
+@rmssysconfdir@/channels.xml.
