@@ -69,7 +69,7 @@ args = cmdlineparser.parse_args()
 
 class Options:
     DEBUG = args.DEBUG
-    callsign = args.callsign  # or set later from config
+    callsign = getattr(args, "callsign", None)  # or set later from config
 
 options = Options()
 
