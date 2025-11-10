@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+. /usr/share/debconf/confmodule
+
+add_group_if_missing() {
+    if ! getent group rmsgw >/dev/null; then
+        addgroup --system --allow-bad-names rmsgw || true
+    fi
+}
+
+add_user_if_missing() {
+    if ! id -u rmsgw > /dev/null 2>&1; then
+        adduser --system --no-create-home \
+          --disabled-password \
+          --allow-bad-names rmsgw \
+          --ingroup rmsgw
+    fi
+}
+
+add_group_if_missing
+add_user_if_missing
+
+db_stop
