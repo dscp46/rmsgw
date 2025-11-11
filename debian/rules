@@ -15,3 +15,5 @@ export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 %:
 	dh $@ --with autoreconf
 
+override_dh_auto_build:
+	dh_auto_build -- CFLAGS="-Dlint $(CFLAGS)"
