@@ -145,7 +145,6 @@ static unsigned int ChallengedPassword(char *challengePhrase, char *password, un
 char *sgl_challenge_response(char *challenge, char *pass)
 {
      unsigned int retVal = 0;
-     int i;
 
      syslog(LOG_DEBUG, "sgl_challenge_response(challenge = %s, pass = %s)",
 	    challenge, pass);

@@ -143,7 +143,7 @@ void dumpshm(void)
  */
 void aciStatus(WINDOW *win)
 {
-     register int	i, j;
+     register int	i;
      struct tm	*t;
 
 /*     wclear(win);*/
@@ -281,8 +281,7 @@ void aciStatus(WINDOW *win)
  */
 void gwStatus(WINDOW *win)
 {
-     register int	i, j;
-     int		names = 1;
+     register int	i;
 
 /*     wclear(win);*/
      werase(win);
@@ -370,8 +369,6 @@ void ShowStatus(void)
  */
 void ShowMessage(WINDOW *win, char *msg)
 {
-     register int	i, j;
-
      wattron(win, COLOR_PAIR(SCR_COLOR_NORMAL));
      mvwprintw(win, 0, 0, "%s", msg);
 
@@ -575,13 +572,10 @@ void gwStatRun(int interval)
  */
 int main(int argc, char *argv[])
 {
-     register int	i, j;
      char		*optstr = "i:l:d";
      int		interval = 5; /* refresh interval */
-     int		shmid;
      int		rc;
      char buffer[MAXBUF];
-     char *logmaskarg = NULL;
      char logmask[64];
      char facility[64];
      int dump = 0;

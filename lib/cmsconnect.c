@@ -60,7 +60,7 @@ int cmsConnect(cmsnode *c)
      struct timeval tv;
      fd_set writefds;
      long arg;
-     int rc, sd;
+     int sd;
      int sStatus;
      socklen_t sStatusSize = sizeof(sStatus);
      struct sockaddr_in sockAddr;

@@ -85,9 +85,6 @@ static char **physicals[] = {
  */
 config *loadConfig(const char *cfgfile, int *rc)
 {
-     char buf[MAXBUF];
-     FILE *cfp;
-
      *rc = 0;
 
      syslog(LOG_DEBUG, "using config file %s", cfgfile);

@@ -53,7 +53,6 @@ static char svnid[] = "$Id: setcmsstat.c 131 2011-11-28 19:31:57Z eckertb $";
 int setcmsstat(cmsnode *p)
 {
      char statfile[PATH_MAX];
-     int fd;
 
      snprintf(statfile, sizeof(statfile), "%s/%s", CMSSTATDIR, p->cms_host);
 

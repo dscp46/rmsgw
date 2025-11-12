@@ -54,7 +54,6 @@ static char svnid[] = "$Id: senddatagram.c 134 2011-11-28 21:40:58Z eckertb $";
 int sendDataGram(char *host, char *port, unsigned char* msg, int msg_len)
 {
      int sd;
-     struct sockaddr_in addr;
      struct addrinfo hints;
      struct addrinfo *ai;
      struct addrinfo *p;

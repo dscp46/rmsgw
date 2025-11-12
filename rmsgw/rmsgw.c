@@ -113,9 +113,7 @@ int main(int argc, char **argv)
      char *bannerfilearg = NULL; /* command line over-ride of banner file */
      char *ax25port = NULL; /* the AX.25 port name of connection */
      int hostTries = 0; /* number hosts we tried for connection */
-     int i;
      char *usercall = NULL;
-     char *cp;
      config *cfg;
      version_blk *version;
      cmsnode *cmslist = NULL, *cmsp = NULL;
