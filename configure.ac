@@ -28,8 +28,10 @@ AC_CHECK_FILE([/usr/local/etc/ax25/axports], [AXPORTS="/usr/local/etc/ax25/axpor
 
 
 # Checks for header files.
+m4_if([m4_version < 2.70],[
 AC_HEADER_STDC
 AC_INCLUDES_DEFAULT # Checks for sys/types.h, sys/stat.h, stdlib.h, string.h, memory.h, strings.h, inttypes.h, stdint.h and unistd.h
+], [])
 AC_CHECK_HEADERS([ctype.h endian.h errno.h fcntl.h math.h netdb.h netinet/in.h signal.h stdarg.h stdbool.h stdio.h sys/ipc.h sys/select.h sys/shm.h sys/socket.h sys/time.h sys/wait.h syslog.h time.h utime.h],,AC_MSG_ERROR([Required headers missing; aborting]))
 
 # Checks for typedefs, structures, and compiler characteristics.
