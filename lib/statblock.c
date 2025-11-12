@@ -48,7 +48,7 @@ static char svnid[] = "$Id: statblock.c 109 2009-08-10 08:31:14Z eckertb $";
  */
 extern int shm_debug;
 
-static char *aci_state_map[] = {
+static const char *aci_state_map[] = {
      "Unused",
      "Running",
      "Idle",
@@ -62,7 +62,7 @@ static char *aci_state_map[] = {
      NULL
 };
 
-static char *gw_state_map[] = {
+static const char *gw_state_map[] = {
      "Unused",
      "Running",
      "Idle",
@@ -79,7 +79,7 @@ static char *gw_state_map[] = {
      NULL
 };
 
-static char *gw_comm_map[] = {
+static const char *gw_comm_map[] = {
      "  ",
      "~~",
      "..",
@@ -123,7 +123,7 @@ int set_shm_debug(void)
  *
  *  returns: pointer to text version of state
  */
-char *map_aci_state(ACISTATE s) {
+const char *map_aci_state(ACISTATE s) {
      /* FIXME: this is simplistic and unchecked */
      return(aci_state_map[s]);
 }
@@ -136,7 +136,7 @@ char *map_aci_state(ACISTATE s) {
  *
  *  returns: pointer to text version of state
  */
-char *map_gw_state(GWSTATE s) {
+const char *map_gw_state(GWSTATE s) {
      /* FIXME: this is simplistic and unchecked */
      return(gw_state_map[s]);
 }
@@ -149,7 +149,7 @@ char *map_gw_state(GWSTATE s) {
  *
  *  returns: pointer to symbol string for state
  */
-char *map_gw_comm(GWSTATE s) {
+const char *map_gw_comm(GWSTATE s) {
      /* FIXME: this is simplistic and unchecked */
      return(gw_comm_map[s]);
 }
