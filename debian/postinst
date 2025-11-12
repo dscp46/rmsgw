@@ -19,7 +19,12 @@ add_user_if_missing() {
     fi
 }
 
+fix_permissions() {
+    chown -R rmsgw:rmsgw /etc/rmsgw/stat
+}
+
 add_group_if_missing
 add_user_if_missing
+fix_permissions
 
 db_stop
