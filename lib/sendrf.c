@@ -33,6 +33,7 @@ static char	svnid[] = "$Id: sendrf.c 118 2010-08-31 11:13:15Z eckertb $";
 #include <stdlib.h>
 #include <syslog.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include <sys/select.h>
 #include <sys/time.h>

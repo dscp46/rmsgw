@@ -42,9 +42,9 @@ static char svnid[] = "$Id: fileage.c 171 2014-10-19 10:00:22Z eckertb $";
 #include <syslog.h>
 #include <errno.h>
 #include <limits.h>
+#include <time.h>
 
 #include <sys/stat.h>
-#include <sys/time.h>
 #include <sys/types.h>
 
 

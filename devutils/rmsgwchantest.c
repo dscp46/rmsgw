@@ -36,7 +36,7 @@ static char svnid[] = "$Id: chantest.c 149 2013-07-03 02:01:55Z eckertb $";
 #include "rms.h"
 #include "rmslib.h"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
      channel *ch;
 

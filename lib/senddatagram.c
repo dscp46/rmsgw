@@ -34,6 +34,7 @@ static char svnid[] = "$Id: senddatagram.c 134 2011-11-28 21:40:58Z eckertb $";
 #include <syslog.h>
 #include <errno.h>
 #include <memory.h>
+#include <unistd.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>

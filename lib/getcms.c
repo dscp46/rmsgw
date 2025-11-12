@@ -38,6 +38,7 @@ static char	svnid[] = "$Id: getcms.c 167 2014-09-30 10:27:26Z eckertb $";
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "rmslib.h"

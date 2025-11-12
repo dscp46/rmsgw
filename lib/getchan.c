@@ -45,6 +45,7 @@ static char svnid[] = "$Id: getchan.c 149 2013-07-03 02:01:55Z eckertb $";
 
 #include "rmslib.h"
 #include "symbol.h"
+#include "var.h"
 
 #define BIGBUF	2048
 
@@ -179,7 +180,7 @@ static int nextent(void)
      if (curent.ch_name) {
 	  xmlFree(curent.ch_name);
      }
-     if ((curent.ch_name = xmlGetProp(cur_node,(xmlChar *) "name"))) {
+     if ((curent.ch_name = (char *) xmlGetProp(cur_node,(xmlChar *) "name"))) {
 	  symAdd(&chan_sym_tab, "name", curent.ch_name); /* errors? if so, we got
 							    really big problems
 							    anyway */
@@ -188,14 +189,14 @@ static int nextent(void)
      if (curent.ch_type) {
 	  xmlFree(curent.ch_type);
      }
-     if ((curent.ch_type = xmlGetProp(cur_node,(xmlChar *) "type"))) {
+     if ((curent.ch_type = (char *) xmlGetProp(cur_node,(xmlChar *) "type"))) {
 	  symAdd(&chan_sym_tab, "type", curent.ch_type);
      }
 
      if (curent.ch_active) {
 	  xmlFree(curent.ch_active);
      }
-     if ((curent.ch_active = xmlGetProp(cur_node,(xmlChar *) "active"))) {
+     if ((curent.ch_active = (char *) xmlGetProp(cur_node,(xmlChar *) "active"))) {
 	  symAdd(&chan_sym_tab, "active", curent.ch_active);
      }
 

@@ -30,6 +30,7 @@ static char	svnid[] = "$Id: loadenv.c 176 2014-10-27 09:07:54Z eckertb $";
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <syslog.h>
 #include <errno.h>

@@ -573,7 +573,7 @@ void gwStatRun(int interval)
 /***
  *  main()
  */
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
      register int	i, j;
      char		*optstr = "i:l:d";

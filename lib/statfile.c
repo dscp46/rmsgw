@@ -36,6 +36,7 @@ static char svnid[] = "$Id: statfile.c 64 2008-08-19 07:46:15Z eckertb $";
 #include <limits.h>
 #include <fcntl.h>
 #include <utime.h>
+#include <unistd.h>
 
 #include <sys/types.h>
 

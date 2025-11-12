@@ -212,7 +212,7 @@ struct ust gateway(int s, config *cfg, char *usercall,
 		     * condition will mean changing the way the
 		     * gateway loop is structured)
 		     */
-		    if (!strncmp(cp, ";;;;;;\r\n", 8)) {
+		    if (!strncmp((char *)cp, ";;;;;;\r\n", 8)) {
 			 continue; /* eat the buffer */
 		    }
 

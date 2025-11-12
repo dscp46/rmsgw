@@ -69,7 +69,7 @@ char *strtrim(char *d, char *s, char *trim_chars, int trim)
       * there)
       */
      if (trim >= 0) {
-	  register c;
+	  register char c;
 	  register char	*mark = d; /* remember where we are in dest buffer */
 
 	  /*
@@ -83,7 +83,7 @@ char *strtrim(char *d, char *s, char *trim_chars, int trim)
 	   * out the string, but trim chars which are within the string are
 	   * preserved
 	   */
-	  while (c = *s++) {
+	  while ((c = *s++)) {
 	       *d++ = c; /* copy current char to dest */
 	       if (!issetmem(&tset, c)) { /* char in set? */
 		    mark = d; /* new save point */
@@ -99,7 +99,7 @@ char *strtrim(char *d, char *s, char *trim_chars, int trim)
 	  d = mark;
 	  *d = '\0';
      } else { /* just copy chars from source to destination */
-	  while (*d++ = *s++) {
+	  while ((*d++ = *s++)) {
 	       ;
 	  }
      }

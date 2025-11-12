@@ -106,7 +106,7 @@ typedef enum { ACI_UNUSED, ACI_RUNNING, ACI_IDLE, ACI_CONNECTING, ACI_CONNECTED,
 typedef struct {
      char rms_hdr_magic[RMS_SHM_MAGICSIZE]; /* magic number for an rmsgw
 					       shared memory segment */
-     /*int rms_hdr_shm_debug; /* flag to turn on shared memory operation
+     /*int rms_hdr_shm_debug; / * flag to turn on shared memory operation
 			       debugging */
 } rms_stat_hdr;
 

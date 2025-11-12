@@ -54,7 +54,7 @@ static char svnid[] = "$Id: set.c 56 2008-08-06 10:40:10Z eckertb $";
  */
 int clearset(set *the_set)
 {
-     register	i;
+     register int i;
 
      for (i = 0; i < 256; i++) {
 	  the_set->set_arr[i] = 0;
