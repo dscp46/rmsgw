@@ -262,9 +262,15 @@ extern void sbset_channel_stats(rms_status *p, char *cms_host, int updates, int 
 extern void sbset_gw_state(rms_status *p, ACISTATE s, char *gwcall);
 extern void sbset_gw_pid(rms_status *p, char *gwcall);
 extern void sbset_gw_usercall(rms_status *p, char *gwcall, char *usercall);
+extern void sbset_gw_cms(rms_status *p, char *gwcall, char *cms_host);
 extern void sb_incr_gw_connects(rms_status *p, char *gwcall);
 extern void sb_add_gw_bytes_in(rms_status *p, char *gwcall, long count);
 extern void sb_add_gw_bytes_out(rms_status *p, char *gwcall, long count);
+
+/*
+ * status file function prototypes
+ */
+extern int setstatfile(char *statfile);
 
 /*
  * GENERAL CONSTANTS

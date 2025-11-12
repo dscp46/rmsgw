@@ -36,6 +36,7 @@
 static char	svnid[] = "$Id: getcms.c 167 2014-09-30 10:27:26Z eckertb $";
 #endif
 
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 

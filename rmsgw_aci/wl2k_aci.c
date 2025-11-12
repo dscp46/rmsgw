@@ -45,6 +45,7 @@ static char svnid[] = "$Id: wl2k_aci.c 176 2014-10-27 09:07:54Z eckertb $";
 
 #include "rms.h"
 #include "rmslib.h"
+#include "aci.h"
 
 /*
  * externs

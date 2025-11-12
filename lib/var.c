@@ -33,6 +33,7 @@
 static char svnid[] = "$Id: var.c 56 2008-08-06 10:40:10Z eckertb $";
 #endif
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
