@@ -95,9 +95,9 @@ static unsigned int ChallengedPassword(char *challengePhrase, char *password, un
       */
      cc.intVal = 0x00000000;
 
-     strcpy(tmpCP, challengePhrase);
-     strcat(tmpCP, password);
-     strncat(tmpCP, slt, 64);
+     strcpy((char *)tmpCP, challengePhrase);
+     strcat((char *)tmpCP, password);
+     strncat((char *)tmpCP, (char *)slt, 64);
 
      //printf("challenge string = '%s'", tmpCP);
 
@@ -105,13 +105,13 @@ static unsigned int ChallengedPassword(char *challengePhrase, char *password, un
       * compute hash
       */
      md5_init(&state);
-     md5_append(&state, (const md5_byte_t *)tmpCP, strlen(tmpCP));
+     md5_append(&state, (const md5_byte_t *)tmpCP, strlen((char *)tmpCP));
      md5_finish(&state, digest); // get the md5 hash (left in digest)
 
      /*
       * wipe buffer now that we have the digest
       */
-     memset(tmpCP, '\0', sizeof(tmpCP));
+     memset((char *)tmpCP, '\0', sizeof((char *)tmpCP));
 
      /*
       * Create a positive integer return value from the hash bytes (using first four bytes)
