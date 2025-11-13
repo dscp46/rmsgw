@@ -1,0 +1,1 @@
+14,42 * * * *  rmsgw    [ -f @rmssysconfdir@/sysop.xml ] && @bindir@/rmsgw_aci > /dev/null 2>&1

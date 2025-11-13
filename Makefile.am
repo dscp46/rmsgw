@@ -12,7 +12,7 @@ do_subst:
 
 CLEANFILES = $(pathheader)
 
-SUBDIRS = include lib rmsgw rmsgw_aci rmsgwmon rmschanstat rmsfinddev devutils man contrib doc etc admin
+SUBDIRS = include lib rmsgw rmsgw_aci rmsgwmon rmschanstat rmsfinddev devutils man contrib doc etc cron admin
 
 ACLOCAL_AMFLAGS = -I m4
 

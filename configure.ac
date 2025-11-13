@@ -55,6 +55,7 @@ AC_CONFIG_FILES([Makefile \
 	rmsfinddev/Makefile \
 	devutils/Makefile \
 	man/Makefile \
+	cron/Makefile \
 	contrib/Makefile \
 	doc/Makefile \
 	doc/assets/Makefile \
