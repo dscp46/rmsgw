@@ -32,7 +32,7 @@ m4_if([m4_version < 2.70],[
 AC_HEADER_STDC
 AC_INCLUDES_DEFAULT # Checks for sys/types.h, sys/stat.h, stdlib.h, string.h, memory.h, strings.h, inttypes.h, stdint.h and unistd.h
 ], [])
-AC_CHECK_HEADERS([ctype.h endian.h errno.h fcntl.h math.h netdb.h netinet/in.h signal.h stdarg.h stdbool.h stdio.h sys/ipc.h sys/select.h sys/shm.h sys/socket.h sys/time.h sys/wait.h syslog.h time.h utime.h],,AC_MSG_ERROR([Required headers missing; aborting]))
+AC_CHECK_HEADERS([ctype.h endian.h errno.h fcntl.h math.h netdb.h netinet/in.h signal.h stdarg.h stdbool.h stdio.h strings.h sys/ipc.h sys/select.h sys/shm.h sys/socket.h sys/time.h sys/wait.h syslog.h time.h utime.h],,AC_MSG_ERROR([Required headers missing; aborting]))
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -43,7 +43,7 @@ AC_FUNC_FORK
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([memmove memset socket strcasecmp strchr strcspn strdup strerror strrchr strspn strstr strtoul])
+AC_CHECK_FUNCS([explicit_bzero memmove memset socket strcasecmp strchr strcspn strdup strerror strrchr strspn strstr strtoul])
 
 AC_CONFIG_FILES([Makefile \
 	include/Makefile \

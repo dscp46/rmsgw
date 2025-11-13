@@ -35,6 +35,7 @@ static char svnid[] = "$Id: sglchallenge.c 167 2014-09-30 10:27:26Z eckertb $";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <math.h>
 #include <stdint.h>
 #include <endian.h>
@@ -111,7 +112,7 @@ static unsigned int ChallengedPassword(char *challengePhrase, char *password, un
      /*
       * wipe buffer now that we have the digest
       */
-     memset((char *)tmpCP, '\0', sizeof((char *)tmpCP));
+     explicit_bzero(tmpCP, sizeof tmpCP);
 
      /*
       * Create a positive integer return value from the hash bytes (using first four bytes)
