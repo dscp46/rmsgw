@@ -4,6 +4,7 @@ man_MANS = \
 	mksysop.py.8 \
 	rms-channels.5 \
 	rms-config.5 \
+	rmsfinddev.1 \
 	rmsgw.1 \
 	rmsgw_aci.1 \
 	updatesysop.py.8
