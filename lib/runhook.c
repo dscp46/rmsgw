@@ -43,6 +43,7 @@ static char svnid[] = "$Id: runhook.c 176 2014-10-27 09:07:54Z eckertb $";
 #include <signal.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 #include "rms.h"
 #include "rmslib.h"
@@ -60,7 +61,7 @@ static char svnid[] = "$Id: runhook.c 176 2014-10-27 09:07:54Z eckertb $";
 int runhook(char* hookdir, char *hook_name, ...)
 {
      char hook_path[PATH_MAX];
-     int rc, status, child_status;
+     int status, child_status;
      char *args[MAXHOOKARGS];
      int argcnt = 0;
      int nullfd;
