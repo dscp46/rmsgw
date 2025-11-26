@@ -1,0 +1,78 @@
+Template: rmsgw/gw_callsign
+Type: string
+Description: RMS Gateway Callsign
+ The callsign this gateway will use, including the SSID.
+ It doesn't need to be assigned to your AX.25 interface.
+
+Template: rmsgw/gw_password
+Type: password
+Description: Password
+ The Winlink password associated to your gateway.
+ Your gateway must have been authorized by Winlink Sysops.
+
+Template: rmsgw/gw_locator
+Type: string
+Description: Maidenhead Locator
+ This gateway's maidenhead locator.
+
+Template: rmsgw/channel_qrg
+Type: string
+Default: 144850000
+Description: Channel frequency
+ Current channel's frequency in Hertz
+
+Template: rmsgw/channel_hours
+Type: string
+Default: 24/7
+Description: Channel Hours
+ The hours of operation of this channel.
+ "24/7" is used for full-time operation.
+
+Template: rmsgw/channel_svc_code
+Type: string
+Default: PUBLIC
+Description: Service Code
+ Current channel's service code
+ .
+ PUBLIC is the service code for maritime and open amateur radio use,
+ including emergency gateways that are open to the public.
+ .
+ EMCOMM is for emergency gateways that do not allow public access. 
+ .
+ Other codes are used by groups who wish to keep gateway information private.
+
+Template: rmsgw/channel_groupref
+Type: select
+Choices: Test site, Public, ARES, MARS, UK Cadet
+Default: Public
+Description: Group Reference
+ Affiliation or overall purpose of the gateway
+
+Template: rmsgw/select_ax25_ports
+Type: multiselect
+Default: 
+Choices: ${PORTLIST}
+Description: Select which AX.25 ports to configure
+ Please select the ports to be configured.
+
+Template: rmsgw/no_ax25_ports
+Type: note
+Description: No AX.25 ports found
+ AX.25 networking does not appear to be configured on this system.
+ .
+ No AX.25 ports were found in /etc/ax25/axports.  
+ Please configure your AX.25 ports, then run:
+ .
+   dpkg-reconfigure rmsgw
+ .
+ to finalize your RMS Gateway configuration.
+
+Template: rmsgw/no_selected_ax25_port
+Type: note
+Description: No selected AX.25 port
+ No AX.25 ports were selected during the previous phase.
+ When you're ready, run:
+ .
+   dpkg-reconfigure rmsgw
+ .
+ to finalize your RMS Gateway configuration.

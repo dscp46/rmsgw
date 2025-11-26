@@ -1,0 +1,122 @@
+#!/bin/sh
+set -e -x
+. /usr/share/debconf/confmodule
+
+ax_iface_available() {
+	if [ $(grep -v '^\(#\|$\)' /etc/ax25/axports | awk '{print $1;}' | wc -l) -eq 0 ]; 
+	then return 1;
+	fi
+
+	return 0;
+}
+
+ax_list_ports() {
+	grep -v '^\(#\|$\)' /etc/ax25/axports | awk '{print $1;}' | paste -sd ',' - | sed 's/,/, /g'
+}
+
+xlat_group_ref() {
+	case "$1" in
+		"Test site") CODE=0 ;;
+		"Public")    CODE=1 ;;
+		"ARES")      CODE=2 ;;
+		"MARS")      CODE=3 ;;
+		"UK Cadet")  CODE=4 ;;
+		*) CODE=1 ;; # fallback default
+	esac
+	echo ${CODE}
+}
+
+if ax_iface_available; then
+	AX_PORTS=$(ax_list_ports)
+	db_subst rmsgw/select_ax25_ports PORTLIST "${AX_PORTS}"
+	db_input high rmsgw/select_ax25_ports || true
+	db_go || true
+	db_get rmsgw/select_ax25_ports; selected_ports="${RET}"
+	if [ ! -z "${selected_ports}" ]; then
+		db_input high rmsgw/gw_callsign || true
+		db_go || true
+		db_get rmsgw/gw_callsign; callsign="${RET}"
+		basecall=$(echo "${callsign}" | sed 's/-.\+//')
+
+		db_input high rmsgw/gw_password || true
+		db_go || true
+		db_get rmsgw/gw_password; password="${RET}"
+
+		db_input high rmsgw/gw_locator || true
+		db_go || true
+		db_get rmsgw/gw_locator; qth="${RET}"
+		sysopconf="${sysopconf}<sysops>\n"
+		sysopconf="${sysopconf}  <sysop>\n"
+		sysopconf="${sysopconf}    <Callsign>${basecall}</Callsign>\n"
+		sysopconf="${sysopconf}    <Password>${password}</Password>\n"
+		sysopconf="${sysopconf}    <GridSquare>${qth}</GridSquare>\n"
+		sysopconf="${sysopconf}    <SysopName></SysopName>\n"
+		sysopconf="${sysopconf}    <StreetAddress1></StreetAddress1>\n"
+		sysopconf="${sysopconf}    <StreetAddress2></StreetAddress2>\n"
+		sysopconf="${sysopconf}    <City></City>\n"
+		sysopconf="${sysopconf}    <State></State>\n"
+		sysopconf="${sysopconf}    <Country></Country>\n"
+		sysopconf="${sysopconf}    <PostalCode></PostalCode>\n"
+		sysopconf="${sysopconf}    <Email></Email>\n"
+		sysopconf="${sysopconf}    <Phones></Phones>\n"
+		sysopconf="${sysopconf}    <Website></Website>\n"
+		sysopconf="${sysopconf}    <Comments></Comments>\n"
+		sysopconf="${sysopconf}  </sysop>\n"
+		sysopconf="${sysopconf}</sysops>\n"
+		chanconf="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		chanconf="${chanconf}<rmschannels xmlns=\"http://www.namespace.org\"\n"
+		chanconf="${chanconf}  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+		chanconf="${chanconf}  xsi:schemaLocation=\"file:///etc/rmsgw/channels.xsd\">\n"
+		for ax_port in $(echo ${selected_ports} | tr -d ','); do
+			db_input high rmsgw/channel_qrg || true
+			db_go || true
+			db_get rmsgw/channel_qrg; qrg="${RET}"
+
+			#Mode
+			db_input high rmsgw/channel_hours || true
+			db_go || true
+			db_get rmsgw/channel_hours; hours="${RET}"
+
+			db_input high rmsgw/channel_svc_code || true
+			db_go || true
+			db_get rmsgw/channel_svc_code; svc_code="${RET}"
+
+			db_input high rmsgw/channel_groupref || true
+			db_go || true
+			db_get rmsgw/channel_groupref; group_ref=$(xlat_group_ref "${RET}")
+			chanconf="${chanconf}  <channel name=\"${ax_port}\" type=\"ax25\" active=\"yes\">\n"
+			chanconf="${chanconf}    <basecall>${basecall}</basecall>\n"
+			chanconf="${chanconf}    <callsign>${callsign}</callsign>\n"
+			chanconf="${chanconf}    <password>${password}</password>\n"
+			chanconf="${chanconf}    <gridsquare>${qth}</gridsquare>\n"
+			chanconf="${chanconf}    <frequency>${qrg}</frequency>\n"
+			chanconf="${chanconf}    <hours>${hours}</hours>\n"
+			chanconf="${chanconf}    <groupreference>${group_ref}</groupreference>\n"
+			chanconf="${chanconf}    <servicecode>${svc_code}</servicecode>\n"
+			chanconf="${chanconf}    <statuschecker>\n"
+			chanconf="${chanconf}      /usr/bin/rmschanstat \$type \$name \$callsign\n"
+			chanconf="${chanconf}    </statuschecker>\n"
+			chanconf="${chanconf}  </channel>\n"
+
+		
+			echo "${ax_port}"
+			echo "Group ref: ${group_ref}"
+		done
+		chanconf="${chanconf}</rmschannels>\n"
+
+		echo "*** Sysop"
+		echo "${sysopconf}"
+		echo "*** Channels"
+		echo "${chanconf}"
+	else
+		db_input high rmsgw/no_selected_ax25_port || true
+		db_go || true
+		exit 0
+	fi
+else
+	db_input high rmsgw/no_ax25_ports || true
+	db_go || true
+	exit 0
+fi
+
+
